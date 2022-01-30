@@ -23,4 +23,10 @@ COPY --chown=admin:swali ./ssh /home/admin/.ssh
 RUN git config --global user.name "J Carlos" && \
     git config --global user.email "jhomanidev@gmail.com"
 
-WORKDIR /home/admin
+EXPOSE 9000
+
+WORKDIR /home/admin/backend
+
+CMD [ "node", "." ]
+
+

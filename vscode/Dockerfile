@@ -5,23 +5,29 @@
 #$ xauth list   // to verify
 #$ firefox // to run firefox into localmachine
 
-FROM ubuntu:22.04
+FROM alpine:3.15
 
 ENV AUTH "mani/unix:0  MIT-MAGIC-COOKIE-1  a83e0e59bd65bca63ac7934182741588"
-VOLUME /etc/localtime
 
-RUN apt-get -y update && \
-    apt-get -y install xauth \
-    python3-pip mousepad
+ENV GID 1001
+ENV UID 1000
 
-RUN adduser --system --group admin --shell /bin/sh
+ENV LANG pt_BR.UTF-8
+ENV LANGUAGE pt_BR.UTF-8
+ENV LC_ALL pt_BR.UTF-8
+
+RUN apk add --no-cache bash xauth tzdata mousepad
+
+RUN addgroup -S swali -g $GID && \
+    adduser -S admin -u $UID -G swali -s /bin/bash
+
+RUN ln -sf /usr/share/zoneinfo/Canada/Eastern /etc/localtime
 
 USER admin
 
 RUN touch /home/admin/.Xauthority && xauth add $AUTH
 
-COPY --chown=admin:admin . home/admin/app
-WORKDIR /home/admin/app
+WORKDIR /home/admin
 
 EXPOSE 8887
-#CMD ["python3", "tk.py"] 
+# CMD ["python3", "tk.py"] 

@@ -8,6 +8,6 @@ pg_ctl start -D /var/lib/postgresql/data
 
 sleep 1;
 
-psql -U postgres -c "CREATE DATABASE alcaldia"
 psql -c "ALTER USER postgres WITH ENCRYPTED PASSWORD 'Test1235';";
+psql -c "CREATE DATABASE alcaldia;"
 

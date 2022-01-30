@@ -2,6 +2,7 @@
 #
 # docker build -t database .
 # docker run -ti -v database bash
+# docker run -p 5432:5432 -t database 
 
 FROM postgres:9.6.24-alpine3.15
 
@@ -16,3 +17,7 @@ COPY --chown=postgres . /var/lib/postgresql/
 RUN /bin/bash /var/lib/postgresql/init.sh
 
 WORKDIR /var/lib/postgresql/
+
+EXPOSE 5432
+
+CMD ["postgres"]
