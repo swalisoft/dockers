@@ -7,7 +7,8 @@ echo "listen_addresses='*'" >> /var/lib/postgresql/data/postgresql.conf;
 pg_ctl start -D /var/lib/postgresql/data
 
 sleep 1;
+psql -c "ALTER USER postgres WITH ENCRYPTED PASSWORD '34353435';";
 
-psql -c "ALTER USER postgres WITH ENCRYPTED PASSWORD 'Test1235';";
+sleep 1;
 psql -c "CREATE DATABASE alcaldia;"
 
