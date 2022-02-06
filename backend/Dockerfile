@@ -3,7 +3,7 @@
 # docker build -t backend .
 # docker run -ti -v ${pwd}:/home/admin/app backend bash
 # grouID  < `$ id -g` userID  < `$ id -u`
-# docker run -it -p 9000:9000 -v /home/jhomani/.shh:/home/admin/.ssh -v /home/jhomani/projects/alcaldia_bk:/home/admin/app backend bash
+# docker run -it -p 9000:9000 -v /home/jhomani/.ssh:/home/admin/.ssh -v /home/jhomani/projects/alcaldia_bk:/home/admin/app backend bash
 
 FROM alpine:3.15
 

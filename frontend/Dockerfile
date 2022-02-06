@@ -23,6 +23,4 @@ WORKDIR /home/admin/app
 
 EXPOSE 3001 
 
-ARG action
-
 CMD ["yarn", "dev"] 

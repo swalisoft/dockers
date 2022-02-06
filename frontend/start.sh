@@ -11,6 +11,6 @@ then
 	project='alcaldia' 
 fi;
 
-echo $project $1 $2 $3
+echo $project $1 $2 $3 "$4"
 
-eval "docker run -it --rm -p 3001:3001 -v $ssh:/home/admin/.ssh -v $baseRute/$project:/home/admin/app alcaldia $1 $2 $3";
+eval "docker run -it --rm -p 3001:3001 -v $ssh:/home/admin/.ssh -v $baseRute/$project:/home/admin/app alcaldia $1 $2 $3 $4";
