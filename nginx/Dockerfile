@@ -7,17 +7,17 @@
 
 FROM ubuntu:20.04
 
-ARG X_AUTH
 VOLUME /etc/localtime
 
-COPY --chown=root . .
-RUN ./install.sh admin
+RUN apt-get -y update && \
+    apt-get -y install nginx
+
+RUN adduser --system --group admin --shell /bin/sh
 
 USER admin
 
-RUN touch /home/admin/.Xauthority && xauth add $X_AUTH
+WORKDIR /home/admin/app
 
-WORKDIR /home/admin
-
-#EXPOSE 8887
+EXPOSE 80
+EXPOSE 443
 #CMD ["python3", "tk.py"] 

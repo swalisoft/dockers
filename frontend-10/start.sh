@@ -13,4 +13,4 @@ fi;
 
 echo $project $1
 
-eval "docker run -it --rm -p 3001:3001 -v $ssh:/home/node/.ssh -v $baseRute/$project:/home/node/app alcaldia_fr $1";
+eval "docker run -it --rm -p 3001:3001 -v $ssh:/home/node/.ssh -v $baseRute/$project:/home/node/app node_10 $1";

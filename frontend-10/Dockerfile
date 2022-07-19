@@ -1,11 +1,10 @@
 # RUN AS
 #
-# docker build -t alcaldia_fr .
-# docker run -ti -v .:/home/admin/app alcaldia_fr
+# docker build -t node_10 .
+# docker run -ti -v .:/home/admin/app node_10
 # grouID  < `$ id -g` userID  < `$ id -u`
 
-#FROM alpine:3.15
-FROm node:16.14.0-alpine3.15
+FROm node:10.13.0-alpine
 
 ENV GID 1001
 ENV UID 1000

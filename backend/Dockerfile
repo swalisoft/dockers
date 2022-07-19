@@ -12,7 +12,7 @@ ENV UID 1000
 
 RUN apk add --no-cache bash nodejs npm yarn git tmux openssh
 
-RUN npm i -g @loopback/cli
+RUN npm i -g serverless
 
 RUN addgroup -S swali -g $GID && \
     adduser -S admin -u $UID -G swali -s /bin/bash
