@@ -3,10 +3,10 @@
 # docker build -t postgres_db .
 # docker run -p 5432:5432 -t postgres_db
 
-FROM postgres:9.6.24-alpine3.15
+FROM postgres:15.0-alpine3.16
 
 ENV POSTGRES_PASSWORD=34353435
-ENV POSTGRES_DB alcaldia 
+ENV POSTGRES_DB workshop 
 
 COPY init.sql /docker-entrypoint-initdb.d/
 
