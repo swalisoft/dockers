@@ -1,0 +1,20 @@
+version: "3.3"
+services:
+  gpvserver:
+    build: .
+    container_name: gpv 
+    hostname: gpv 
+    restart: always
+    networks:
+      - rsnet
+    ports:
+      - '3010:80'
+      - '3012:8000'
+    volumes:
+      - './:/var/www/html'
+    environment:
+      XDEBUG_CONFIG: remote_host=172.17.0.1
+      XDEBUG_REMOTE_CONNECT_BACK: 1
+      PHP_IDE_CONFIG: "serverName= gpv.develoop"
+networks:
+  rsnet:
