@@ -1,45 +1,36 @@
 FROM php:7.3.4-apache
 
-ENV GID 1000
-ENV UID 1000
+# Get dependencies for PrestaShop
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       build-essential \
+       vim wget \
+       dialog \
+       git \
+       libxml2-dev \
+       libicu-dev \
+       zlib1g-dev \
+        g++ \
+	&& rm -rf /var/lib/apt/lists/*
 
 # Install Mcrypt
 RUN apt-get update \
-  && apt-get install -y libmcrypt-dev git \
-  && pecl install mcrypt \
-  && docker-php-ext-enable mcrypt
-
-# Install iconv
-RUN docker-php-ext-install iconv
-
-# Install iconv
-RUN docker-php-ext-install iconv
-
-# XDebug
-RUN pecl install xdebug-2.7.0
-RUN docker-php-ext-enable xdebug
-
-# Install JSON
-RUN docker-php-ext-install json
-
-# Install PDO & PDO(MySQL)
-RUN docker-php-ext-install pdo
-RUN docker-php-ext-configure pdo_mysql --with-pdo-mysql
-RUN docker-php-ext-install -j$(nproc) pdo_mysql
+    && apt-get install -y libmcrypt-dev \
+    && pecl install mcrypt \
+    && docker-php-ext-enable mcrypt
 
 # Install Mbstring
-RUN docker-php-ext-configure mbstring --enable-mbstring
-RUN docker-php-ext-install mbstring
+RUN docker-php-ext-configure mbstring --enable-mbstring && \
+    docker-php-ext-install mbstring
 
-# Install ZIP
-RUN apt-get install -y zip libzip-dev \
-  && docker-php-ext-configure zip --with-libzip \
-  && docker-php-ext-install zip
+# Install CURL
+RUN apt-get update && apt-get install -y curl
 
-# Install composer
-RUN curl -sS https://getcomposer.org/installer | php && \
-  mv composer.phar /usr/local/bin/composer && \
-  chmod +x /usr/local/bin/composer
+# Install DOM
+RUN docker-php-ext-install dom
+
+# Install Fileinfo
+RUN docker-php-ext-install fileinfo
 
 # Install GD
 RUN apt-get update \
@@ -51,15 +42,111 @@ RUN apt-get update \
 		--with-freetype-dir=/usr/include/ \
 		--with-jpeg-dir=/usr/include/ \
 		--with-png-dir=/usr/include/ \
-	&& docker-php-ext-install -j$(nproc) gd
+	&& docker-php-ext-install -j$(nproc) \
+		gd \
+	&& apt-get purge -y \
+		libfreetype6-dev \
+		libpng-dev \
+		libjpeg-dev
 
+# Install iconv
+RUN docker-php-ext-install iconv
 
-RUN addgroup --gid $GID swali && \
-	adduser --uid $UID \
-		--ingroup swali \
-		--shell /bin/bash \
-		--disabled-password \
-		--gecos "" \
-		--disabled-password admin
+# Install Intl
+RUN docker-php-ext-configure intl \
+  && docker-php-ext-install intl
 
-USER admin
+# Install JSON
+RUN docker-php-ext-install json
+
+# Install Mbstring
+RUN docker-php-ext-configure mbstring --enable-mbstring
+RUN docker-php-ext-install mbstring
+
+# Install ZIP
+RUN apt-get install -y zip libzip-dev \
+  && docker-php-ext-configure zip --with-libzip \
+  && docker-php-ext-install zip
+
+# Install OpenSSL
+RUN apt-get -y update && \
+    apt-get -y --no-install-recommends install --fix-missing libcurl3 \
+    libcurl3-openssl-dev \
+    openssl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install PDO & PDO(MySQL)
+RUN docker-php-ext-install pdo
+RUN docker-php-ext-configure pdo_mysql --with-pdo-mysql
+RUN docker-php-ext-install -j$(nproc) pdo_mysql
+
+# Install SimpleXML
+RUN docker-php-ext-install simplexml
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php \
+        && mv composer.phar /usr/local/bin/ \
+        && ln -s /usr/local/bin/composer.phar /usr/local/bin/composer
+
+# Install Bcmath
+RUN docker-php-ext-configure bcmath --enable-bcmath
+RUN docker-php-ext-install bcmath
+
+# Install Soap
+RUN docker-php-ext-configure soap --enable-soap
+RUN docker-php-ext-install soap
+
+# instal gettext & tokenizer
+RUN docker-php-ext-install gettext
+RUN docker-php-ext-install tokenizer
+
+# Install Opcache
+RUN docker-php-ext-install opcache
+RUN docker-php-ext-enable opcache
+
+# Copy opcache configration
+# COPY ./docker/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+COPY ./docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
+
+#Intall imagick for manipulate images
+RUN apt-get update \
+    && apt-get install -y libmagickwand-dev imagemagick libtidy-dev \
+    && pecl install imagick-3.4.3RC2 \
+    && docker-php-ext-enable imagick \
+    && docker-php-ext-install tidy \
+    && docker-php-ext-enable tidy
+
+# XDebug
+RUN pecl install xdebug-2.7.0
+RUN docker-php-ext-enable xdebug
+
+# Xmlrpc
+RUN docker-php-ext-install xmlrpc
+RUN docker-php-ext-install xmlwriter 
+
+#Install SSL Cert
+RUN apt-get update
+RUN apt-get install -y ssl-cert
+
+# Setup Apache2 mod_ssl
+RUN a2enmod ssl
+RUN a2enmod rewrite
+RUN a2enmod headers
+# Setup Apache2 HTTPS env
+RUN mkdir -p /etc/apache2/ssl
+COPY ./docker/ssl/cert.pem /etc/apache2/ssl/cert.pem
+COPY ./docker/ssl/key.pem /etc/apache2/ssl/key.pem
+COPY ./docker/apache/default.conf /etc/apache2/sites-enabled/000-default.conf
+
+RUN update-ca-certificates
+
+EXPOSE 80
+EXPOSE 443
+
+# Clean up
+RUN apt-get remove -y git && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Apache configuration
+RUN a2enmod rewrite
+RUN chown -R www-data:www-data /var/www/html/
+RUN usermod -u 1000 www-data
