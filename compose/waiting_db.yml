@@ -1,0 +1,31 @@
+services:
+  main:
+    image: ejabberd/ecs
+    container_name: ejabberd
+    environment:
+      - CTL_ON_CREATE=register admin swalisoft.com Test1235
+      - CTL_ON_START=registered_users swalisoft.com ;
+        status
+    ports:
+      - "5222:5222"
+      - "5269:5269"
+      - "5280:5280"
+      - "5443:5443"
+    volumes:
+      - ./ejabberd.yml:/home/ejabberd/conf/ejabberd.yml:ro
+    depends_on:
+      database:
+        condition: service_healthy
+  database:
+    image: mariadb:10.8
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql:/docker-entrypoint-initdb.d
+    environment:
+      - MARIADB_DATABASE=chat
+      - MARIADB_ROOT_PASSWORD=Test1235
+    healthcheck:
+      test: ["CMD", "mysqladmin" , "ping", "--password=Test1235"]
+      timeout: 20s
+      retries: 10
