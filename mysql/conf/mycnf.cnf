@@ -1,0 +1,10 @@
+[client]
+default-character-set=UTF8MB4
+
+[mysql]
+default-character-set=UTF8MB4
+
+[mysqld]
+collation-server = utf8mb4_unicode_ci
+character-set-server = UTF8MB4
+sql-mode="STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION"
