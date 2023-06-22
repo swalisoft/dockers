@@ -1,0 +1,19 @@
+version: "3.3"
+services:
+  resapp:
+    build: .
+    container_name: boston
+    hostname: boston
+    ports:
+      - '5005:8000'
+    volumes:
+      - ../www:/var/www/html
+    environment:
+      XDEBUG_MODE: develop,debug
+    networks:
+      - default
+networks:
+  default:
+    external: true
+    name: mysql_develoop
+
