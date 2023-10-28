@@ -1,3 +1,4 @@
+# docker build -t php7.3.4:apache
 FROM php:7.3.4-apache
 
 #Update stretch repositories
@@ -73,13 +74,6 @@ RUN apt-get install -y zip libzip-dev \
   && docker-php-ext-configure zip --with-libzip \
   && docker-php-ext-install zip
 
-# Install OpenSSL
-RUN apt-get -y update && \
-    apt-get -y --no-install-recommends install --fix-missing libcurl3 \
-    libcurl3-openssl-dev \
-    openssl && \
-    rm -rf /var/lib/apt/lists/*
-
 # Install PDO & PDO(MySQL)
 RUN docker-php-ext-install pdo
 RUN docker-php-ext-configure pdo_mysql --with-pdo-mysql
@@ -109,10 +103,6 @@ RUN docker-php-ext-install tokenizer
 RUN docker-php-ext-install opcache
 RUN docker-php-ext-enable opcache
 
-# Copy opcache configration
-# COPY ./docker/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
-COPY ./docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
-
 #Intall imagick for manipulate images
 RUN apt-get update \
     && apt-get install -y libmagickwand-dev imagemagick libtidy-dev \
@@ -128,25 +118,6 @@ RUN docker-php-ext-enable xdebug
 # Xmlrpc
 RUN docker-php-ext-install xmlrpc
 RUN docker-php-ext-install xmlwriter 
-
-#Install SSL Cert
-RUN apt-get update
-RUN apt-get install -y ssl-cert
-
-# Setup Apache2 mod_ssl
-RUN a2enmod ssl
-RUN a2enmod rewrite
-RUN a2enmod headers
-# Setup Apache2 HTTPS env
-RUN mkdir -p /etc/apache2/ssl
-COPY ./docker/ssl/cert.pem /etc/apache2/ssl/cert.pem
-COPY ./docker/ssl/key.pem /etc/apache2/ssl/key.pem
-COPY ./docker/apache/default.conf /etc/apache2/sites-enabled/000-default.conf
-
-RUN update-ca-certificates
-
-EXPOSE 80
-EXPOSE 443
 
 # Clean up
 RUN apt-get remove -y git && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
