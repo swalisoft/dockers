@@ -1,0 +1,31 @@
+version: '3.3'
+
+services:
+  pgsql:
+    image: postgres:15.0-alpine3.16
+    container_name: pgsql
+    networks:
+      - develoop
+    cpus: 2
+    mem_limit: 4096m
+    environment:
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "Test1235"
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      - ./conf/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+  pgadmin:
+    image: dpage/pgadmin4:8.1
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - 5442:80
+    networks:
+      - develoop
+networks:
+  develoop:
+    driver: bridge
