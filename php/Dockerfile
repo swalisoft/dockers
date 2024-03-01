@@ -1,3 +1,4 @@
+# docker build -t php7.3.4:apache
 FROM php:7.3.4-apache
 
 #Update stretch repositories
@@ -72,13 +73,6 @@ RUN docker-php-ext-install mbstring
 RUN apt-get install -y zip libzip-dev \
   && docker-php-ext-configure zip --with-libzip \
   && docker-php-ext-install zip
-
-# Install OpenSSL
-RUN apt-get -y update && \
-    apt-get -y --no-install-recommends install --fix-missing libcurl3 \
-    libcurl3-openssl-dev \
-    openssl && \
-    rm -rf /var/lib/apt/lists/*
 
 # Install PDO & PDO(MySQL)
 RUN docker-php-ext-install pdo
