@@ -110,8 +110,7 @@ RUN docker-php-ext-install opcache
 RUN docker-php-ext-enable opcache
 
 # Copy opcache configration
-# COPY ./docker/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
-COPY ./docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
+# COPY ./docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
 
 #Intall imagick for manipulate images
 RUN apt-get update \
@@ -137,16 +136,14 @@ RUN apt-get install -y ssl-cert
 RUN a2enmod ssl
 RUN a2enmod rewrite
 RUN a2enmod headers
+
 # Setup Apache2 HTTPS env
 RUN mkdir -p /etc/apache2/ssl
-COPY ./docker/ssl/cert.pem /etc/apache2/ssl/cert.pem
-COPY ./docker/ssl/key.pem /etc/apache2/ssl/key.pem
-COPY ./docker/apache/default.conf /etc/apache2/sites-enabled/000-default.conf
+# COPY ./docker/ssl/cert.pem /etc/apache2/ssl/cert.pem
+# COPY ./docker/ssl/key.pem /etc/apache2/ssl/key.pem
+# COPY ./docker/apache/default.conf /etc/apache2/sites-enabled/000-default.conf
 
 RUN update-ca-certificates
-
-EXPOSE 80
-EXPOSE 443
 
 # Clean up
 RUN apt-get remove -y git && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

@@ -94,7 +94,7 @@ RUN docker-php-ext-install opcache
 RUN docker-php-ext-enable opcache
 
 # Copy opcache configration
-COPY ./docker/php/php.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+# COPY ./docker/php/php.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 # #Intall imagick for manipulate images
 # RUN apt-get update \
