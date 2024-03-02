@@ -79,6 +79,8 @@ RUN docker-php-ext-install pdo
 RUN docker-php-ext-configure pdo_mysql --with-pdo-mysql
 RUN docker-php-ext-install -j$(nproc) pdo_mysql
 
+RUN docker-php-ext-install mysqli
+
 # Install SimpleXML
 RUN docker-php-ext-install simplexml
 
@@ -120,7 +122,7 @@ RUN docker-php-ext-install xmlrpc
 RUN docker-php-ext-install xmlwriter 
 
 # Clean up
-RUN apt-get remove -y git && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Apache configuration
 RUN a2enmod rewrite
