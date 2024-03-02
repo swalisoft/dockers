@@ -105,6 +105,9 @@ RUN docker-php-ext-install tokenizer
 RUN docker-php-ext-install opcache
 RUN docker-php-ext-enable opcache
 
+# Copy opcache configration
+# COPY ./docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
+
 #Intall imagick for manipulate images
 RUN apt-get update \
     && apt-get install -y libmagickwand-dev imagemagick libtidy-dev \
@@ -120,6 +123,23 @@ RUN docker-php-ext-enable xdebug
 # Xmlrpc
 RUN docker-php-ext-install xmlrpc
 RUN docker-php-ext-install xmlwriter 
+
+#Install SSL Cert
+RUN apt-get update
+RUN apt-get install -y ssl-cert
+
+# Setup Apache2 mod_ssl
+RUN a2enmod ssl
+RUN a2enmod rewrite
+RUN a2enmod headers
+
+# Setup Apache2 HTTPS env
+RUN mkdir -p /etc/apache2/ssl
+# COPY ./docker/ssl/cert.pem /etc/apache2/ssl/cert.pem
+# COPY ./docker/ssl/key.pem /etc/apache2/ssl/key.pem
+# COPY ./docker/apache/default.conf /etc/apache2/sites-enabled/000-default.conf
+
+RUN update-ca-certificates
 
 # Clean up
 RUN apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

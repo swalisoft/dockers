@@ -1,17 +1,26 @@
 version: "3.3"
 services:
-  resapp:
+  php:
     build: .
-    container_name: boston
-    hostname: boston
-    ports:
-      - '5005:8000'
+    container_name: staing
+    hostname: staing
     volumes:
-      - ../www:/var/www/html
+      - ./:/var/www
+      - ./docker/php/xdegub.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
     environment:
       XDEBUG_MODE: develop,debug
     networks:
       - default
+  nginx-php:
+    build:
+      context: nginx
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8090:80"
+    volumes:
+      - ./:/var/www
+    links:
+      - php
 networks:
   default:
     external: true
