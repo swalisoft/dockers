@@ -1,0 +1,5 @@
+src/app/Resources/email/node_modules
+src/var/cache
+src/var/logs
+src/var/sessions
+src/vendor

@@ -1,0 +1,13 @@
+FROM perfectly-spoken-api-base
+
+ENV APP_ENV prod
+
+USER root
+
+COPY ./config/php.prod.ini /usr/local/etc/php/conf.d/96-env.ini
+
+USER www-data
+
+COPY ./src /var/www
+
+RUN composer install --no-dev --optimize-autoloader --no-interaction

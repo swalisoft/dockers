@@ -1,0 +1,29 @@
+version: "3.7"
+services:
+  php:
+    build:
+      dockerfile: Dockerfile.dev
+    environment:
+      API_HOSTNAME: "http://localhost:8090"
+    volumes:
+    - ./www:/var/www:delegated
+    - php-cache:/var/www/var/cache
+  nginx-php:
+    build:
+      context: nginx
+      dockerfile: Dockerfile.dev
+    ports:
+    - "8090:80"
+    volumes:
+    - ./www:/var/www:delegated
+    links:
+    - php
+  # mailcatcher:
+  #   image: schickling/mailcatcher
+  #   ports:
+  #   - "1080:1080"
+volumes:
+  php-cache:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs

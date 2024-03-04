@@ -1,0 +1,27 @@
+FROM php8-api-base
+
+USER root
+
+RUN echo http://dl-2.alpinelinux.org/alpine/edge/community/ >> /etc/apk/repositories
+
+# Install XDebug
+RUN apk --no-cache add shadow linux-headers \
+  && usermod -u 1000 www-data \
+  && pecl install xdebug-3.2.2 \
+  && docker-php-ext-enable xdebug
+
+# Install PostgreSQL client (required for pg_dump/pg_restore in test suite)
+RUN apk --no-cache add postgresql-client
+
+# Install PCOV (code coverage checks)
+RUN apk add --no-cache $PHPIZE_DEPS \
+    && pecl install pcov \
+    && docker-php-ext-enable pcov
+
+# Install Symfony CLI (security checks)
+RUN curl -L https://github.com/symfony/cli/releases/download/v4.15.0/symfony_linux_amd64 -o /usr/local/bin/symfony \
+    && chmod +x /usr/local/bin/symfony
+
+COPY ./config/php.dev.ini /usr/local/etc/php/conf.d/96-env.ini
+
+USER www-data

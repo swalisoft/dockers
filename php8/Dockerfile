@@ -95,6 +95,7 @@ RUN docker-php-ext-enable opcache
 
 # Copy opcache configration
 # COPY ./docker/php/php.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+COPY ./config/www.conf /usr/local/etc/php-fpm.d/www.conf
 
 # #Intall imagick for manipulate images
 # RUN apt-get update \
@@ -112,12 +113,12 @@ RUN docker-php-ext-enable xdebug
 # RUN docker-php-ext-install xmlrpc
 # RUN docker-php-ext-install xmlwriter 
 
-# COPY ./docker/apache/default.conf /etc/apache2/sites-enabled/000-default.conf
-
 # RUN update-ca-certificates
 
 # Clean up
 RUN apt-get remove -y git && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+COPY ./config/php.dev.ini /usr/local/etc/php/conf.d/96-env.ini
 
 # Apache configuration
 # RUN a2enmod rewrite
